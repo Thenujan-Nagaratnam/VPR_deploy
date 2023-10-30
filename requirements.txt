@@ -1,0 +1,13 @@
+Flask
+gunicorn
+tensorflow
+numpy
+pillow
+altair
+pandas
+streamlit
+torch
+torchvision
+open-clip-torch
+opencv-python
+gradio
