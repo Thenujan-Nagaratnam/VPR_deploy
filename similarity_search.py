@@ -1,6 +1,5 @@
 import numpy as np
 import torch as th
-import cv2
 from PIL import Image
 import time
 import copy
@@ -55,19 +54,20 @@ def convert_indices_to_labels(indices, labels):
             row[j] = labels[row[j]]
     return indices_copy
 
+
 def read_image(image_file):
-    img = cv2.imread(
-        image_file, cv2.IMREAD_COLOR | cv2.IMREAD_IGNORE_ORIENTATION
-    )
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    if img is None:
-        raise ValueError('Failed to read {}'.format(image_file))
-    return img
+    try:
+        img = Image.open(image_file)
+        img = img.convert('RGB')
+        return img
+    except Exception as e:
+        raise ValueError('Failed to read {}: {}'.format(image_file, str(e)))
+
 
 
 def transform_img(image):
     img = image
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    # img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     
     if isinstance(img, np.ndarray):
         img =  Image.fromarray(img)

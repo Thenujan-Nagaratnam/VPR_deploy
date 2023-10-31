@@ -9,7 +9,7 @@ import os
 import similarity_search
 # import gradio as gr
 from flask import Flask, request, jsonify
-
+# import cv2
 
 # def transform_image(pillow_image):
 #     data = np.asarray(pillow_image)
@@ -35,13 +35,13 @@ def get_similar_images(image):
     return similar_image_ids
 
 def read_image(image_file):
-    img = cv2.imread(
-        image_file, cv2.IMREAD_COLOR | cv2.IMREAD_IGNORE_ORIENTATION
-    )
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    if img is None:
-        raise ValueError('Failed to read {}'.format(image_file))
-    return img
+    try:
+        img = Image.open(image_file)
+        img = img.convert('RGB')
+        return img
+    except Exception as e:
+        raise ValueError('Failed to read {}: {}'.format(image_file, str(e)))
+
 
 def predict(image):
 
@@ -67,7 +67,7 @@ def index():
             file.save(file_path)
             pillow_img = read_image(file_path)
             prediction = predict(pillow_img)
-            data = {"prediction": int(prediction)}
+            data = {"prediction": prediction}
             return jsonify(data)
         except Exception as e:
             return jsonify({"error": str(e)})
